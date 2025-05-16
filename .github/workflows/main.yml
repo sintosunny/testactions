@@ -28,5 +28,5 @@ jobs:
           context: .
           push: true
           tags: |
-            sintosunny/flutter-web-app:latest
-            sintosunny/flutter-web-app:${{ github.sha }}
+            sintosunny1008/flutter-web-app:latest
+            sintosunny1008/flutter-web-app:${{ github.sha }}
