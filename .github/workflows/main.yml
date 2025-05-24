@@ -8,7 +8,7 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    env: 
+    env:
       DOCKER_REPO_NAME: "294619603110.dkr.ecr.ap-southeast-2.amazonaws.com/demo_push_testaction"
 
     steps:
@@ -24,7 +24,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Build and push Docker image to Docker Hub
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -40,12 +40,23 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: "ap-southeast-2"
 
-
       - name: Login to AWS ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
       - name: Tag and Push Docker Image to AWS ECR
         run: |
-          echo "#### Pushing Image To ECR ####"
-          docker push $DOCKER_REPO_NAME:$IMAGE_TAG
+          echo "#### Tagging and Pushing Image To ECR ####"
+          IMAGE_TAG=${{ github.sha }}
+          IMAGE_URI=${DOCKER_REPO_NAME}:${IMAGE_TAG}
+          LATEST_URI=${DOCKER_REPO_NAME}:latest
+
+          # Tag the Docker image for ECR
+          docker tag sintosunny1008/flutter-web-app:${{ github.sha }} $IMAGE_URI
+          docker tag sintosunny1008/flutter-web-app:latest $LATEST_URI
+
+          # Push to ECR
+          echo "Pushing $IMAGE_URI"
+          docker push $IMAGE_URI
+          echo "Pushing $LATEST_URI"
+          docker push $LATEST_URI
