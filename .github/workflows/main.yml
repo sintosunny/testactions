@@ -3,7 +3,7 @@ name: Application Build
 on:
   push:
     branches:
-      - master
+      - main
       - uat
       - staging
 
